@@ -50,7 +50,7 @@
             background-color: #fff;
             border: 1px solid #ced4da;
             border-radius: 0.375rem;
-            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+            text-align: center;
         }
         .form-control {
             display: block;
@@ -67,8 +67,8 @@
             -moz-appearance: none;
             appearance: none;
             border-radius: 0.375rem;
-            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
             height:33px;
+            text-align: center;
         }
 
         .motor_kv_range.form-control{
@@ -213,7 +213,7 @@
         function calculate_results(lipo_value,motor_value,output_value){
             console.log(lipo_value,motor_value,output_value)
             let ans = 50000/(lipo_value*motor_value*(output_value/100.0))
-            let nearest_value=Math.min(2,Math.round(ans * 20) / 20.0);
+            let nearest_value=parseFloat(Math.min(2,Math.round(ans * 20) / 20.0));
             master_multiplier.value=nearest_value
             range_result.innerHTML=nearest_value
         }
@@ -232,16 +232,19 @@
         })
 
         motor_kv_range.addEventListener("keyup",function(e){
+
             motor_kv_range_value = e.target.value
+
             motor_kv.value=motor_kv_range_value
             motor_kv_text.innerHTML=motor_kv_range_value
-            motor_kv_value=motor_kv_range_value
+
+
             if(!motor_kv_range_value || motor_kv_range_value < 1300){
-                motor_kv_value=1300
+                motor_kv_range_value=1300
                 motor_kv.value=1300
                 motor_kv_text.innerHTML=1300
             }else if(motor_kv_range_value > 2800){
-                motor_kv_value=2800
+                motor_kv_range_value=2800
                 motor_kv.value=2800
                 motor_kv_range.value=2800
                 motor_kv_text.innerHTML=2800
@@ -253,7 +256,7 @@
                 output_limit_value=100
             }
             
-            calculate_results(lipo__battery_value,motor_kv_value,output_limit_value)
+            calculate_results(lipo__battery_value,motor_kv_range_value,output_limit_value)
         })
         
 
