@@ -17,7 +17,7 @@
             width: 100%;
             max-width: 1000px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             column-gap: 32px;
             margin:0 auto;
         }
@@ -70,6 +70,11 @@
             transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
             height:33px;
         }
+
+        .motor_kv_range.form-control{
+            margin-bottom: 20px;
+        }
+
         .form-control:focus-visible,
         .form-select:focus-visible{
             outline:none;
@@ -81,7 +86,7 @@
 
         .range-slider__range {
             -webkit-appearance: none;
-            width: calc(100% - (73px));
+            width: calc(100% - (72px));
             height: 12px;
             border-radius: 5px;
             background: #d7dcdf;
@@ -126,7 +131,7 @@
         .range-slider__value {
             display: inline-block;
             position: absolute;
-            width: 52px;
+            width: 60px;
             height:30px;
             color: #fff;
             line-height: 20px;
@@ -173,6 +178,7 @@
         </div>
         <div class="motor_kv">
             <h3>Motor KV</h3>
+            <input type="number" class="motor_kv_range form-control" id="motor_kv_range" placeholder="1300">
             <div class="range-slider">
                 <input class="range-slider__range" type="range" value="1300" min="1300" max="2800" id="motor_kv" step="5">
                 <span class="range-slider__value" id="motor_kv_text">1300</span>
@@ -194,6 +200,7 @@
     <script>
         let lipo__battery = document.getElementById("lipo__battery")
         let motor_kv = document.getElementById("motor_kv")
+        let motor_kv_range = document.getElementById("motor_kv_range")
         let output_limit= document.getElementById("output_limit")
         let master_multiplier= document.getElementById("master_multiplier")
         let range_result= document.getElementById("range_result")
@@ -215,14 +222,46 @@
         lipo__battery.addEventListener("change",function(e){
             lipo__battery_value=e.target.value
             motor_kv_value = motor_kv.value
-            output_limit_value = output_limit.value | 100;
+            output_limit_value = output_limit.value;
+            if(!output_limit_value){
+                output_limit_value=100
+            }
             calculate_results(lipo__battery_value,motor_kv_value,output_limit_value)
+            
         })
+
+        motor_kv_range.addEventListener("keyup",function(e){
+            lipo__battery_value=lipo__battery.value
+            motor_kv_value = motor_kv.
+            output_limit_value = output_limit.value;
+            if(!output_limit_value){
+                output_limit_value=100
+            }
+            motor_kv.value=e.target.value
+            motor_kv_text.innerHTML=e.target.value
+            if(!e.target.value || e.target.value < 1300){
+                motor_kv.value=1300
+                motor_kv_text.innerHTML=1300
+            }else if(e.target.value > 2800){
+                motor_kv.value=2800
+                motor_kv_range.value=2800
+            }
+            
+            if(e.target.value >= 1300 && e.target.value<=2800){
+                calculate_results(lipo__battery_value,motor_kv_value,output_limit_value)
+            }
+        })
+        
+
         motor_kv.addEventListener("change",function(e){
             motor_kv_text.innerHTML=e.target.value
             lipo__battery_value=lipo__battery.value
             motor_kv_value = e.target.value
-            output_limit_value = output_limit.value | 100;
+            output_limit_value = output_limit.value;
+            if(!output_limit_value){
+                output_limit_value=100
+            }
+            motor_kv_range.value=e.target.value
             calculate_results(lipo__battery_value,motor_kv_value,output_limit_value)
         })
         output_limit.addEventListener("keyup",function(e){
