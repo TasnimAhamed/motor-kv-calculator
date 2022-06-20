@@ -18,7 +18,6 @@
             max-width: 1000px;
             display: flex;
             align-items: flex-start;
-            flex-wrap: wrap;
             column-gap: 32px;
             margin:0 auto;
         }
@@ -165,6 +164,9 @@
             border: 0;
         }
         @media (min-width: 320px) and (max-width: 767px) {
+            .calculator__wrapper{
+                flex-wrap: wrap;
+            }
             .lipo__battery,
             .motor_kv,
             .output_limit,
