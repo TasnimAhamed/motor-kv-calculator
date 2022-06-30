@@ -234,8 +234,8 @@
             let ans = 50000/(lipo_value*motor_value*(output_value/100.0))
             let cal_res=parseFloat(Math.min(2,Math.round(ans * 20) / 20.0));
             let nearest_value=cal_res+parseFloat(fly__weight_value);
-            master_multiplier.value=nearest_value
-            range_result.innerHTML=nearest_value
+            master_multiplier.value=nearest_value.toFixed(2)
+            range_result.innerHTML=nearest_value.toFixed(2)
         }
 
         calculate_results(lipo__battery_value,motor_kv_value,output_limit_value,fly__weight_value)
