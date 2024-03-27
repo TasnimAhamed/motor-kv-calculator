@@ -26,14 +26,16 @@
         .output_limit,
         .master_multiplier,
         .motor_kv,
-        .fly__weight{
+        .quad__weight,
+        .prop__size{
             width: 20%;
         }
         .lipo__battery h3,
         .motor_kv h3,
         .output_limit h3,
         .master_multiplier h3,
-        .fly__weight h3{
+        .quad__weight h3,
+        .prop__size h3{
             font-size: 16px;
             text-align: center;
             margin: 0 0 16px 0;
@@ -172,7 +174,7 @@
             .motor_kv,
             .output_limit,
             .master_multiplier,
-            .fly__weight{
+            .quad__weight{
                 flex-basis:100%;
                 width: 100%;
                 margin-bottom: 20px;
@@ -183,6 +185,31 @@
 </head>
 <body>
     <div class="calculator__wrapper">
+        <div class="prop__size">
+            <h3>Prop Size</h3>
+            <select id="prop__size" class="form-select">
+                <option value="3-4">3-4"</option>
+                <option value="5">5"</option>
+                <option value="6">6"</option>
+                <option value="7">7"</option>
+            </select>
+        </div>
+        <div class="quad__weight">
+            <h3>Quad weight</h3>
+            <select id="quad__weight" class="form-select">
+                <option value="0" data-id="3-4">Sub250g</option>
+                <option value="0.1" data-id="3-4">250-350g</option>
+                <option value="0" data-id="5">500-650g</option>
+                <option value="0.1" data-id="5">650g-750g</option>
+                <option value="0.2" data-id="5">750g-850g</option>
+                <option value="0" data-id="6">500-650g</option>
+                <option value="0.1" data-id="6">650g-750g</option>
+                <option value="0.2" data-id="6">750g-850g</option>
+                <option value="0" data-id="7">650g-750g</option>
+                <option value="0.1" data-id="7">750g-850g</option>
+                <option value="0.2" data-id="7">850g+</option>
+            </select>
+        </div>
         <div class="lipo__battery">
             <h3>Lipo Battery</h3>
             <select id="lipo__battery" class="form-select">
@@ -195,16 +222,6 @@
             <h3>Motor KV</h3>
             <input type="number" class="motor_kv form-control" id="motor_kv" value="2500">
         </div>
-        <div class="fly__weight">
-            <h3>Ready To Fly Weight</h3>
-            <select id="fly__weight" class="form-select">
-                <option value="-0.05">500-600g</option>
-                <option value="0">600-700g</option>
-                <option value="0.1">700-800g</option>
-                <option value="0.2">800-900g</option>
-                <option value="0.3">900g+</option>
-            </select>
-        </div>
         <div class="output_limit">
             <h3>Motor Ouput Limit</h3>
             <input type="number" class="output_limit-input form-control" id="output_limit" placeholder="100%">
@@ -212,43 +229,74 @@
         <div class="master_multiplier">
             <h3>Master Multiplier</h3>
             <div class="range-slider">
-                <input class="range-slider__range" type="range" value="0.1" min="0.1" max="2.0" step="0.1" id="master_multiplier">
+                <input class="range-slider__range" type="range" value="0.1" min="0.1" max="3.0" step="0.1" id="master_multiplier">
                 <span class="range-slider__value" id="range_result"></span>
             </div>
         </div>
     </div>
 
     <script>
+        let prop__size = document.getElementById("prop__size")
         let lipo__battery = document.getElementById("lipo__battery")
-        let fly__weight = document.getElementById("fly__weight")
+        let quad__weight = document.getElementById("quad__weight")
+        let quad__weight_options = document.querySelectorAll("#quad__weight option")
         let motor_kv = document.getElementById("motor_kv")
         let output_limit= document.getElementById("output_limit")
         let master_multiplier= document.getElementById("master_multiplier")
         let range_result= document.getElementById("range_result")
 
         let lipo__battery_value = lipo__battery.value
-        let fly__weight_value=fly__weight.value
+        let quad__weight_value=quad__weight.value
         let motor_kv_value = motor_kv.value
         let output_limit_value = output_limit.value | 100;
 
-        function calculate_results(lipo_value,motor_value,output_value,fly__weight_value){
+        function calculate_results(lipo_value,motor_value,output_value,quad__weight_value){
             let ans = 50000/(lipo_value*motor_value*(output_value/100.0))
-            let nearest_value=parseFloat(Math.min(2,(Math.round(ans * 20) / 20.0)+parseFloat(fly__weight_value)));
+            let nearest_value=parseFloat(Math.min(2,(Math.round(ans * 20) / 20.0)+parseFloat(quad__weight_value)));
             master_multiplier.value=nearest_value.toFixed(2)
             range_result.innerHTML=nearest_value.toFixed(2)
         }
 
-        calculate_results(lipo__battery_value,motor_kv_value,output_limit_value,fly__weight_value)
+        calculate_results(lipo__battery_value,motor_kv_value,output_limit_value,quad__weight_value)
+
+        prop__size.addEventListener("change", function(e){
+            let prop__size_value = e.target.value
+            let paisi = true;
+            let new_option;
+            quad__weight_options.forEach(option => {
+                option.removeAttribute("selected")
+                if(option.getAttribute("data-id") == prop__size_value){
+                    option.style.display="block"
+                    if(paisi) {
+                        new_option = option;
+                        paisi = false
+                    }
+                }
+                else{
+                    option.style.display="none"
+                }
+            });
+            new_option.setAttribute("selected", "")
+
+            lipo__battery_value=lipo__battery.value
+            motor_kv_value = motor_kv.value
+            output_limit_value = output_limit.value;
+            quad__weight_value = 0
+            if(!output_limit_value){
+                output_limit_value=100
+            }
+            calculate_results(lipo__battery_value,motor_kv_value,output_limit_value,quad__weight_value)
+        })
 
         lipo__battery.addEventListener("change",function(e){
             lipo__battery_value=e.target.value
             motor_kv_value = motor_kv.value
             output_limit_value = output_limit.value;
-            fly__weight_value=fly__weight.value
+            quad__weight_value=quad__weight.value
             if(!output_limit_value){
                 output_limit_value=100
             }
-            calculate_results(lipo__battery_value,motor_kv_value,output_limit_value,fly__weight_value)
+            calculate_results(lipo__battery_value,motor_kv_value,output_limit_value,quad__weight_value)
             
         })
 
@@ -259,34 +307,34 @@
             }
             lipo__battery_value=lipo__battery.value
             output_limit_value = output_limit.value;
-            fly__weight_value=fly__weight.value
+            quad__weight_value=quad__weight.value
             if(!output_limit_value){
                 output_limit_value=100
             }
             
-            calculate_results(lipo__battery_value,motor_kv_value,output_limit_value,fly__weight_value)
+            calculate_results(lipo__battery_value,motor_kv_value,output_limit_value,quad__weight_value)
         })
         
         output_limit.addEventListener("keyup",function(e){
             lipo__battery_value=lipo__battery.value
             motor_kv_value = motor_kv.value
             output_limit_value = e.target.value;
-            fly__weight_value=fly__weight.value
+            quad__weight_value=quad__weight.value
             if(!output_limit_value){
                 output_limit_value=100
             }
-            calculate_results(lipo__battery_value,motor_kv_value,output_limit_value,fly__weight_value)
+            calculate_results(lipo__battery_value,motor_kv_value,output_limit_value,quad__weight_value)
         })
 
-        fly__weight.addEventListener("change",function(e){
+        quad__weight.addEventListener("change",function(e){
             lipo__battery_value=lipo__battery.value
             motor_kv_value = motor_kv.value
             output_limit_value = output_limit.value;
-            fly__weight_value=e.target.value
+            quad__weight_value=e.target.value
             if(!output_limit_value){
                 output_limit_value=100
             }
-            calculate_results(lipo__battery_value,motor_kv_value,output_limit_value,fly__weight_value)
+            calculate_results(lipo__battery_value,motor_kv_value,output_limit_value,quad__weight_value)
             
         })
     </script>
