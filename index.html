@@ -200,15 +200,15 @@
             <select id="quad__weight" class="form-select">
                 <option value="0" data-id="3-4">Sub250g</option>
                 <option value="0.1" data-id="3-4">250-350g</option>
-                <option value="0" data-id="5">500-650g</option>
-                <option value="0.1" data-id="5">650g-750g</option>
-                <option value="0.2" data-id="5">750g-850g</option>
-                <option value="0" data-id="6">500-650g</option>
-                <option value="0.1" data-id="6">650g-750g</option>
-                <option value="0.2" data-id="6">750g-850g</option>
-                <option value="0" data-id="7">650g-750g</option>
-                <option value="0.1" data-id="7">750g-850g</option>
-                <option value="0.2" data-id="7">850g+</option>
+                <option value="0" data-id="5" style="display: none;">500-650g</option>
+                <option value="0.1" data-id="5" style="display: none;">650g-750g</option>
+                <option value="0.2" data-id="5" style="display: none;">750g-850g</option>
+                <option value="0" data-id="6" style="display: none;">500-650g</option>
+                <option value="0.1" data-id="6" style="display: none;">650g-750g</option>
+                <option value="0.2" data-id="6" style="display: none;">750g-850g</option>
+                <option value="0" data-id="7" style="display: none;">650g-750g</option>
+                <option value="0.1" data-id="7" style="display: none;">750g-850g</option>
+                <option value="0.2" data-id="7" style="display: none;">850g+</option>
             </select>
         </div>
         <div class="lipo__battery">
@@ -263,13 +263,13 @@
         prop__size.addEventListener("change", function(e){
             let prop__size_value = e.target.value
             let paisi = true;
-            let new_option;
-            quad__weight_options.forEach(option => {
+            let idx;
+            quad__weight_options.forEach((option, index) => {
                 option.removeAttribute("selected")
                 if(option.getAttribute("data-id") == prop__size_value){
                     option.style.display="block"
                     if(paisi) {
-                        new_option = option;
+                        idx = index;
                         paisi = false
                     }
                 }
@@ -277,7 +277,7 @@
                     option.style.display="none"
                 }
             });
-            new_option.setAttribute("selected", "")
+            quad__weight_options[idx].setAttribute("selected", "")
 
             lipo__battery_value=lipo__battery.value
             motor_kv_value = motor_kv.value
